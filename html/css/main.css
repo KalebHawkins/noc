@@ -1,0 +1,14 @@
+body {
+    background-color: rgb(80, 70, 70);
+    color: white;
+}
+
+iframe {
+    overflow: hidden;
+}
+
+.float-child {
+    width: 50%;
+    float: left;
+    text-align: center;
+}
