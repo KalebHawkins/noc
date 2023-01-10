@@ -13,38 +13,56 @@ type Walker interface {
 	Draw(dst *ebiten.Image)
 }
 
+type WalkerType int
+
+const (
+	FourStep WalkerType = iota
+	EightStep
+	DownRight
+)
+
 type walker struct {
-	size  float64
-	steps int
-	x     float64
-	y     float64
-	color color.Color
+	size   float64
+	typeOf WalkerType
+	x      float64
+	y      float64
+	color  color.Color
 }
 
 // NewWalker returns a 4 steps walker. These walkers can move randomly up, down, left, or right.
 func NewWalker(size, x, y float64, clr color.Color) Walker {
 	return &walker{
-		size:  size,
-		steps: 4,
-		x:     x,
-		y:     y,
-		color: clr,
+		size:   size,
+		typeOf: FourStep,
+		x:      x,
+		y:      y,
+		color:  clr,
 	}
 }
 
 // New8StepWalker walker that can walk in eight directions. These walkers can move randomly up, down, left, or right, up-right, down-right, up-left, down-left.
 func New8StepWalker(size, x, y float64, clr color.Color) Walker {
 	return &walker{
-		size:  size,
-		steps: 8,
-		x:     x,
-		y:     y,
-		color: clr,
+		size:   size,
+		typeOf: EightStep,
+		x:      x,
+		y:      y,
+		color:  clr,
+	}
+}
+
+func NewDownRightWalker(size, x, y float64, clr color.Color) Walker {
+	return &walker{
+		size:   size,
+		typeOf: DownRight,
+		x:      x,
+		y:      y,
+		color:  clr,
 	}
 }
 
 func (w *walker) Walk() {
-	if w.steps == 4 {
+	if w.typeOf == FourStep {
 		dir := rand.Intn(4)
 		switch dir {
 		case 0:
@@ -58,13 +76,32 @@ func (w *walker) Walk() {
 		}
 	}
 
-	if w.steps == 8 {
+	if w.typeOf == EightStep {
 		// Generate a random number (-1, 0, 1)
 		dirX := rand.Intn(3) - 1
 		dirY := rand.Intn(3) - 1
 
 		w.x += float64(dirX)
 		w.y += float64(dirY)
+	}
+
+	if w.typeOf == DownRight {
+		prob := rand.Float64()
+		switch {
+		// Probability to Move:
+		// Up: 20%
+		// Right: 30%
+		// Down: 30%
+		// Left: 20%
+		case prob < .20:
+			w.y--
+		case prob > .20 && prob < .50:
+			w.x++
+		case prob > .50 && prob < .80:
+			w.y++
+		case prob > .80 && prob < 1:
+			w.x--
+		}
 	}
 }
 
