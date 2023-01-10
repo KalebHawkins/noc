@@ -11,7 +11,11 @@ numberDistribution: numberDistribution/main.go
 	cd numberDistribution && \
 	GOOS=js GOARCH=wasm go build -o ../wasm_bin/numberDistribution.wasm ./main.go
 
-all: wasm_js walker numberDistribution
+paintSplatter: paintSplatter/main.go
+	cd paintSplatter && \
+	GOOS=js GOARCH=wasm go build -o ../wasm_bin/paintSplatter.wasm ./main.go
 
+all: wasm_js walker numberDistribution paintSplatter
+	 
 clean:
 	rm -rf wasm_bin/*
